@@ -178,6 +178,20 @@
 	};
 
 	reserved-memory {
+		/*
+		 * Firmware-owned region: the vendor DTB and the bootloader mark
+		 * 0x80b00000-0x8d7fffff as removed/no-map.  Writing to it trips
+		 * an XPU protection violation that resets the SoC instantly,
+		 * with no kernel message.  The board DTS deletes the smaller
+		 * SoC-level node (0x5300000) but previously never added the
+		 * larger one back, so the region was handed to the page
+		 * allocator as System RAM.
+		 */
+		removed_mem: memory@80b00000 {
+			reg = <0x0 0x80b00000 0x0 0xcd00000>;
+			no-map;
+		};
+
 		camera_mem: camera@8dc00000 {
 			reg = <0x0 0x8dc00000 0x0 0x500000>;
 			no-map;
